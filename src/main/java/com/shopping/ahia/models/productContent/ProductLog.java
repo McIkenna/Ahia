@@ -20,8 +20,6 @@ public class ProductLog {
     private String id;
     private String categoryIdentifier;
     private Integer productSequence=0;
-    @DBRef
     private Category category;
-    @DBRef
     private List<Product> products = new ArrayList<>();
 }

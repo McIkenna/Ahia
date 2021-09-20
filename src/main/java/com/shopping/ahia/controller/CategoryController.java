@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @SpringBootApplication
@@ -29,28 +31,35 @@ public class CategoryController {
         if(errorMap != null){
             return errorMap;
         }
-        Category category1 = categoryService.saveOrUpdate(category);
+        Category category1 = categoryService.save(category);
         return new ResponseEntity<Category>(category1, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCategoryById(@PathVariable long id){
-        Category Cat1 = categoryService.findByCategoryId(id);
-        return new ResponseEntity<Category>(Cat1, HttpStatus.OK);
+    public Optional<Category> getCategoryById(@PathVariable String id){
+        return categoryService.findById(id);
     }
+    /*
     @GetMapping("/{categoryName}")
     public ResponseEntity<?> getCategoryByName(@PathVariable String categoryName){
         Category Cat1 = categoryService.findByCategoryName(categoryName);
         return new ResponseEntity<Category>(Cat1, HttpStatus.OK);
-    }
+    }*/
 
     @GetMapping("/all")
     public List<Category> getAllCategory(){
         return categoryService.findAllCategory();
     }
 
+
+    @GetMapping("/page")
+    public Map<String, Object> getAllCategoryInPage(@RequestParam(name="pageNo", defaultValue = "0") int pageNo,
+                                                    @RequestParam(name="pageSize", defaultValue = "2") int pageSize,
+                                                    @RequestParam(name="sortBy", defaultValue = "id") String sortBy){
+        return categoryService.getAllCategoryInPage(pageNo, pageSize, sortBy);
+    }
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable long id){
+    public ResponseEntity<?> deleteCategory(@PathVariable String id){
         categoryService.deleteCategoryById(id);
         return new ResponseEntity<String>("User with ID: " + id + " was deleted", HttpStatus.OK);
     }

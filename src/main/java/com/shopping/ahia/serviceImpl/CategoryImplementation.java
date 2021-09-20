@@ -6,10 +6,18 @@ import com.shopping.ahia.repository.CategoryRepository;
 import com.shopping.ahia.repository.ProductLogRepository;
 import com.shopping.ahia.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.UUID;
+import javax.validation.Valid;
+import java.util.*;
 
 @Service
 public class CategoryImplementation implements CategoryService {
@@ -19,46 +27,73 @@ public class CategoryImplementation implements CategoryService {
     @Autowired
     ProductLogRepository productLogRepository;
 
+    @PostMapping("")
     @Override
-    public Category saveOrUpdate(Category category) throws Exception {
-        UUID newId = UUID.randomUUID();
-        Integer catSequence = category.getCategoryIdentifier();
-        catSequence++;
+    public Category save(Category category) throws Exception {
+
+
+
         try{
-            Category category1 = new Category(category.getId(), category.getCategoryName(), category.getCategoryIdentifier(), category.getCategoryDescription(), category.getProductLog());
-            category1.setCategoryIdentifier(catSequence);
-            if(category1.getId() == null){
-                    ProductLog productLog = new ProductLog();
-                    category1.setProductLog(productLog);
-                    productLog.setCategory(category1);
-
-
-                   // productLog.setCategoryIdentifier(category1.getCategoryIdentifier());
-                }if(category1.getId() != null){
-             //   category1.setProductLog(productLogRepository.findByCategoryIdentifier(category1.getCategoryIdentifier()));
+            if(category.getId() == null || category.getCategoryIdentifier() == null){
+                UUID newId = UUID.randomUUID();
+                category.setCategoryIdentifier(newId.toString());
             }
-                return categoryRepository.save(category);
+
+            return categoryRepository.save(category);
 
         }catch (Exception e){
             throw new Exception(e.getMessage());
         }
-
     }
 
     @Override
-    public void deleteCategoryById(long id) {
-        categoryRepository.delete(findByCategoryId(id));
+    public Category update(Category category) throws Exception {
+
+        try{
+            return categoryRepository.save(category);
+
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override
-    public Category findByCategoryId(long id) {
-        Category category = categoryRepository.findById(id);
+    public void deleteCategoryById(String id) {
+        categoryRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<Category> findById(String id) {
+        Optional<Category> category = categoryRepository.findById(id);
+   /*    Query query = new Query(Criteria.where("id").is(new ObjectId(id)));
+        Category category = mongoTemplate.findOne(query, Category.class);*/
         return category;
+
     }
+
+    @Override
+    public Map<String, Object> getAllCategoryInPage(int pageNo, int pageSize, String sortBy){
+        Map<String, Object> response = new HashMap<String, Object>();
+        Sort sort = Sort.by(sortBy);
+        Pageable page = PageRequest.of(pageNo, pageSize, sort);
+        Page<Category> categoryPage = categoryRepository.findAll(page);
+        response.put("data", categoryPage.getContent());
+        response.put("Total No of page", categoryPage.getTotalPages());
+        response.put("Total No of elements", categoryPage.getTotalElements());
+        response.put("Current Page No", categoryPage.getNumber());
+
+        return response;
+    }
+
 
     @Override
     public List<Category> findAllCategory() {
         return categoryRepository.findAll();
+    }
+
+    @Override
+    public Optional<Category> findByCategoryIdentifier(String id) {
+        return categoryRepository.findByCategoryIdentifier(id);
     }
 
     @Override

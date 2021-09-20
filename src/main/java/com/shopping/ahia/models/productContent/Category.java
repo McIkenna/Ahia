@@ -16,10 +16,10 @@ import javax.validation.constraints.NotBlank;
 @Document
 public class Category {
     @Id
-    private ObjectId id;
+    private String id;
     @NotBlank(message="Category name is needed")
     private String categoryName;
-    private int categoryIdentifier = 0;
+    private String categoryIdentifier;
     private String categoryDescription;
     @DBRef
     private ProductLog productLog;
