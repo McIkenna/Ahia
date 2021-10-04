@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document
@@ -17,11 +18,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Brand {
-    @Id
-    private ObjectId id;
-    @NotBlank(message="BrandName is required")
     private String brandName;
-    @DBRef
-    private List<Product> products; // one to Many
-
 }

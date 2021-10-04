@@ -1,4 +1,4 @@
-package com.shopping.ahia.models;
+package com.shopping.ahia.models.userContent;
 
 public class Address {
     private String id;
@@ -6,4 +6,5 @@ public class Address {
     private String addressLn2;
     private String city;
     private String country;
+    private int postalCode;
 }

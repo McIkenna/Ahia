@@ -1,16 +1,21 @@
 package com.shopping.ahia.serviceImpl;
 
+import com.shopping.ahia.models.productContent.Category;
 import com.shopping.ahia.models.productContent.Product;
-import com.shopping.ahia.models.productContent.ProductLog;
 import com.shopping.ahia.repository.CategoryRepository;
-import com.shopping.ahia.repository.ProductLogRepository;
 import com.shopping.ahia.repository.ProductRepository;
+import com.shopping.ahia.repository.ReviewRepository;
+import com.shopping.ahia.service.CategoryService;
 import com.shopping.ahia.service.ProductService;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ProductImplementation implements ProductService {
@@ -19,42 +24,53 @@ public class ProductImplementation implements ProductService {
     @Autowired
     CategoryRepository categoryRepository;
     @Autowired
-    ProductLogRepository productLogRepository;
-    @Override
-    public Product saveOrUpdate(String categoryIdentifier,  Product product) throws Exception {
+    ReviewRepository reviewRepository;
 
-        UUID newId = UUID.randomUUID();
-        try{
-            product.setId(newId.toString());
-            ProductLog productLog = productLogRepository.findByCategoryIdentifier(categoryIdentifier);
-            product.setProductLog(productLog);
-            Integer ProductLogSequence = productLog.getProductSequence();
-            ProductLogSequence++;
-            productLog.setProductSequence(ProductLogSequence);
-            product.setProductSequence(product.getCategoryIdentifier()+ "-"+ ProductLogSequence);
-            product.setCategoryIdentifier(categoryIdentifier);
-            return productRepository.save(product);
-        }catch (Exception ex){
-            throw new Exception(ex);
-        }
-    }
 
     @Override
-    public void deleteProductById(long id) throws Exception {
-            productRepository.delete(findByProductId(id));
-
-    }
-
-    @Override
-    public Product findByProductId(long id) throws Exception {
+    public Product save(Product product, String categoryId,  MultipartFile[] files, MultipartFile file) throws Exception {
         try{
 
-            Product product = productRepository.findById(id);
-            return product;
+            Category category = categoryRepository.findById(categoryId);
+            product.setCategoryId(categoryId);
+            product.setMainImage(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+                for(MultipartFile extraFile : files){
+                    product.getExtraImages().add(new Binary(BsonBinarySubType.BINARY, extraFile.getBytes()));
+                  /*  if(count == 0) product.setExtraImage1(new Binary(BsonBinarySubType.BINARY, extraFile.getBytes()));
+                    if(count == 1) product.setExtraImage1(new Binary(BsonBinarySubType.BINARY, extraFile.getBytes()));
+                    if(count == 2) product.setExtraImage1(new Binary(BsonBinarySubType.BINARY, extraFile.getBytes()));
+                    if(count == 3) product.setExtraImage1(new Binary(BsonBinarySubType.BINARY, extraFile.getBytes()));
+                    count++;*/
+                }
+
+            product.getBrand().setBrandName(product.getBrand().getBrandName().toUpperCase());
+
+            Product product1 = productRepository.save(product);
+            category.getProducts().add(product1);
+            categoryRepository.save(category);
+          return product1;
         }catch(Exception ex){
-            throw new Exception("product with Id "+id+" does not exist");
+            throw new Exception(ex.getMessage());
         }
     }
+
+    @Override
+    public void deleteProductById(String id) throws Exception {
+       productRepository.delete(findByProductId(id));
+    }
+
+    @Override
+    public Product findByProductId(String id) throws Exception {
+        try{
+
+            return productRepository.findById(id);
+
+        }catch (Exception e){
+            throw new Exception("Product with ID " + id + " Does not exist");
+        }
+    }
+
+
 
     @Override
     public List<Product> findAllProduct() {
@@ -65,21 +81,30 @@ public class ProductImplementation implements ProductService {
     public Product findByProductName(String productName) throws Exception {
         try{
 
-            Product product = productRepository.findByProductName(productName);
-            return product;
+            return productRepository.findByProductName(productName);
+
         }catch(Exception ex){
             throw new Exception("product with Id "+ productName +" does not exist");
         }
     }
 
     @Override
-    public List<Product> findProductByCategory(String categoryName) throws Exception {
+    public List<Product> findProductByCategory(String categoryId) throws Exception {
         try{
-
-            return productRepository.findByCategoryName(categoryName);
-
+            List<Product> products = productRepository.findByCategoryId(categoryId);
+            return products;
         }catch(Exception ex){
-            throw new Exception("product with Id "+ categoryName +" does not exist");
+            throw new Exception("product with Id "+ categoryId +" does not exist");
+        }
+    }
+
+    @Override
+    public List<Product> findByBrandName(String brandName) throws Exception {
+        try{
+            List<Product> products = productRepository.findByBrand_BrandName(brandName);
+            return products;
+        }catch(Exception ex){
+            throw new Exception("product with Id "+ brandName +" does not exist");
         }
     }
 }

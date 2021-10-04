@@ -1,4 +1,4 @@
-package com.shopping.ahia.models.productContent;
+package com.shopping.ahia.models.common;
 
 
 public enum Size {

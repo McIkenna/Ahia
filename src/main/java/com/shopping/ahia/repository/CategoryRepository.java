@@ -7,12 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface CategoryRepository extends MongoRepository<Category, String> {
+public interface CategoryRepository extends MongoRepository<Category, Long> {
 
 
     Category findByCategoryName(String categoryName);
-
-    Optional<Category> findById(String id);
-    Optional<Category> findByCategoryIdentifier(String id);
+    Category findById(String id);
+    void deleteById(String id);
     List<Category> findAll();
 }

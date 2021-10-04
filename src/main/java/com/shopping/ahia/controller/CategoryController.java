@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -26,19 +27,21 @@ public class CategoryController {
     ErrorMapping errorMapping;
 
     @PostMapping("")
-    public ResponseEntity<?> saveCategory(@Valid @RequestBody Category category, BindingResult result)throws Exception{
+    public ResponseEntity<?> saveCategory(@Valid @ModelAttribute Category category, MultipartFile file, BindingResult result)throws Exception{
         ResponseEntity<?> errorMap = errorMapping.ErrorMappingService(result);
         if(errorMap != null){
             return errorMap;
         }
-        Category category1 = categoryService.save(category);
+        Category category1 = categoryService.save(file, category);
         return new ResponseEntity<Category>(category1, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public Optional<Category> getCategoryById(@PathVariable String id){
+    public Category getCategoryById(@PathVariable String id){
         return categoryService.findById(id);
     }
+
+
     /*
     @GetMapping("/{categoryName}")
     public ResponseEntity<?> getCategoryByName(@PathVariable String categoryName){

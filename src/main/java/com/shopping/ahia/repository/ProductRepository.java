@@ -10,9 +10,8 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends MongoRepository<Product, Long> {
     Product findByProductName(String productName);
-    @Query("{Category.categoryName?:0}")
-    List<Product> findByCategoryName(String categoryName);
-    Product findById(long id);
-    Product findByProductSequence(String sequence);
+    List<Product> findByCategoryId(String categoryId);
+    Product findById(String id);
     List<Product> findAll();
+    List<Product> findByBrand_BrandName(String brandName);
 }

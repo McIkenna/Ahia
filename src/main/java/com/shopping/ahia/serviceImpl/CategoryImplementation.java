@@ -1,22 +1,24 @@
 package com.shopping.ahia.serviceImpl;
 
 import com.shopping.ahia.models.productContent.Category;
-import com.shopping.ahia.models.productContent.ProductLog;
 import com.shopping.ahia.repository.CategoryRepository;
-import com.shopping.ahia.repository.ProductLogRepository;
 import com.shopping.ahia.service.CategoryService;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import java.util.*;
 
 @Service
@@ -24,28 +26,32 @@ public class CategoryImplementation implements CategoryService {
 
     @Autowired
     CategoryRepository categoryRepository;
-    @Autowired
-    ProductLogRepository productLogRepository;
 
-    @PostMapping("")
+
+/*
     @Override
-    public Category save(Category category) throws Exception {
-
-
-
+    public Category save(MultipartFile file, Category category) throws Exception {
         try{
-            if(category.getId() == null || category.getCategoryIdentifier() == null){
-                UUID newId = UUID.randomUUID();
-                category.setCategoryIdentifier(newId.toString());
-            }
-
+            category.setCategoryImage(
+                    new Binary(BsonBinarySubType.BINARY, file.getBytes()));
             return categoryRepository.save(category);
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    } */
 
+    @Override
+    public Category save(MultipartFile file, Category category) throws Exception {
+        try{
+            category.setCategoryImage(
+                    new Binary(BsonBinarySubType.MD5, file.getBytes()));
+            return categoryRepository.save(category);
         }catch (Exception e){
             throw new Exception(e.getMessage());
         }
     }
 
+/*
     @Override
     public Category update(Category category) throws Exception {
 
@@ -55,7 +61,7 @@ public class CategoryImplementation implements CategoryService {
         }catch (Exception e){
             throw new Exception(e.getMessage());
         }
-    }
+    }*/
 
     @Override
     public void deleteCategoryById(String id) {
@@ -63,10 +69,11 @@ public class CategoryImplementation implements CategoryService {
     }
 
     @Override
-    public Optional<Category> findById(String id) {
-        Optional<Category> category = categoryRepository.findById(id);
-   /*    Query query = new Query(Criteria.where("id").is(new ObjectId(id)));
-        Category category = mongoTemplate.findOne(query, Category.class);*/
+    public Category findById(String id) {
+       Category category = categoryRepository.findById(id);
+     /* Query query = new Query(Criteria.where("id").is(new ObjectId(id)));
+        Category category = mongoTemplate.findOne(query, Category.class);
+*/
         return category;
 
     }
@@ -91,10 +98,6 @@ public class CategoryImplementation implements CategoryService {
         return categoryRepository.findAll();
     }
 
-    @Override
-    public Optional<Category> findByCategoryIdentifier(String id) {
-        return categoryRepository.findByCategoryIdentifier(id);
-    }
 
     @Override
     public Category findByCategoryName(String categoryName) {
