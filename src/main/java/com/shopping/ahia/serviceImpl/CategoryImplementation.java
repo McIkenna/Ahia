@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -26,6 +27,8 @@ public class CategoryImplementation implements CategoryService {
 
     @Autowired
     CategoryRepository categoryRepository;
+    @Autowired
+    MongoOperations mongoOperations;
 
 
 /*
@@ -43,9 +46,18 @@ public class CategoryImplementation implements CategoryService {
     @Override
     public Category save(MultipartFile file, Category category) throws Exception {
         try{
-            category.setCategoryImage(
-                    new Binary(BsonBinarySubType.MD5, file.getBytes()));
-            return categoryRepository.save(category);
+            Query query = new Query();
+            query.addCriteria(Criteria.where("_id").is(category.getId()));
+            Category category1 = mongoOperations.findOne(query, Category.class);
+            if(category1 == null){
+                category.setCategoryImage(new Binary(BsonBinarySubType.MD5, file.getBytes()));
+                return categoryRepository.save(category);
+            }else{
+                category1.setCategoryName(category.getCategoryName());
+                category1.setCategoryDescription(category.getCategoryDescription());
+                category1.setCategoryImage(new Binary(BsonBinarySubType.MD5, file.getBytes()));
+                return categoryRepository.save(category1);
+            }
         }catch (Exception e){
             throw new Exception(e.getMessage());
         }

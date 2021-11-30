@@ -25,7 +25,6 @@ public class ProductController {
     @Autowired
     ErrorMapping errorMapping;
 
-    Logger logger;
 
     @PostMapping("/{categoryId}")
     public ResponseEntity<?> saveProduct(@Valid @ModelAttribute Product product, MultipartFile[] files, MultipartFile file, @PathVariable String categoryId, BindingResult result)throws Exception{

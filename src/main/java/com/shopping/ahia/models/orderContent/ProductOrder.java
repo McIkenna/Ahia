@@ -5,6 +5,7 @@ import com.shopping.ahia.models.common.Status;
 import com.shopping.ahia.models.productContent.Product;
 import com.shopping.ahia.models.userContent.AppUser;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -17,11 +18,12 @@ import java.util.List;
 @Document
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class ProductOrder {
     @Id
     private String id;
-    private int quantity;
-    private double totalPrice;
+    private int totalQuantity = 0;
+    private double totalPrice = 0.0;
     private double shippingPrice;
     private Date createdDate;
     private PaymentMethod paymentMethod;

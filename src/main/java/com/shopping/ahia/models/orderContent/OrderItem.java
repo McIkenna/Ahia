@@ -2,6 +2,7 @@ package com.shopping.ahia.models.orderContent;
 
 import com.shopping.ahia.models.productContent.Product;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -12,6 +13,7 @@ import java.util.Date;
 @Document
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class OrderItem {
     @Id
     private String id;

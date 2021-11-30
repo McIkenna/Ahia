@@ -31,6 +31,7 @@ public class CartImplementation implements CartService {
            // AppUser user = appUserRepository.findById(userId);
             Product product = productRepository.findById(productId);
             //cart.setAppUser(user);
+            cart.setNumOfItems(cart.getNumOfItems()+1);
             cart.setCartImage(product.getMainImage());
             cart.setProduct(product);
             return cartRepository.save(cart);
@@ -42,10 +43,9 @@ public class CartImplementation implements CartService {
     @Override
     public Cart listCartItems(AppUser user) {
         List<Cart> cartList = cartRepository.findAllByAppUserOrderByCreatedDateDesc(user);
-
         double totalCost = 0;
         for(Cart cartItems: cartList){
-            totalCost +=(cartItems.getProduct().getPrice()*cartItems.getQuantity());
+           totalCost +=(cartItems.getProduct().getPrice()*cartItems.getQuantity());
         }
         Cart cart = new Cart();
         cart.setTotalPrice(totalCost);
@@ -64,12 +64,11 @@ public class CartImplementation implements CartService {
         List<Cart> cartList = cartRepository.findAll();
         double totalCost = 0;
         for(Cart cartItems: cartList){
-            totalCost +=(cartItems.getProduct().getPrice()*cartItems.getQuantity());
+            totalCost +=(cartItems.getProduct().getPrice() * cartItems.getQuantity());
         }
         Cart cart = new Cart();
         cart.setTotalPrice(totalCost);
         return cart;
-
     }
 
     @Override

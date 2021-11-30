@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public interface CategoryRepository extends MongoRepository<Category, Long> {
 
-
     Category findByCategoryName(String categoryName);
     Category findById(String id);
     void deleteById(String id);
