@@ -12,6 +12,8 @@ import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,30 +27,33 @@ public class ProductImplementation implements ProductService {
     CategoryRepository categoryRepository;
     @Autowired
     ReviewRepository reviewRepository;
+    @Autowired
+    MongoOperations mongoOperations;
 
 
     @Override
     public Product save(Product product, String categoryId,  MultipartFile[] files, MultipartFile file) throws Exception {
         try{
-
+//            Query query = new Query();
+//            query.addCriteria(Criteria.where("_id").is(product.getId()));
+//            Product product1 = mongoOperations.findOne(query, Product.class);
             Category category = categoryRepository.findById(categoryId);
-            product.setCategoryId(categoryId);
+            //Save Images
             product.setMainImage(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
-                for(MultipartFile extraFile : files){
-                    product.getExtraImages().add(new Binary(BsonBinarySubType.BINARY, extraFile.getBytes()));
-                  /*  if(count == 0) product.setExtraImage1(new Binary(BsonBinarySubType.BINARY, extraFile.getBytes()));
-                    if(count == 1) product.setExtraImage1(new Binary(BsonBinarySubType.BINARY, extraFile.getBytes()));
-                    if(count == 2) product.setExtraImage1(new Binary(BsonBinarySubType.BINARY, extraFile.getBytes()));
-                    if(count == 3) product.setExtraImage1(new Binary(BsonBinarySubType.BINARY, extraFile.getBytes()));
-                    count++;*/
-                }
+            for(MultipartFile extraFile : files){
+                product.getExtraImages().add(new Binary(BsonBinarySubType.BINARY, extraFile.getBytes()));
+            }
+                product.setCategoryId(categoryId);
+                product.setBrand(product.getBrand().toUpperCase());
+                Product prod = productRepository.save(product);
+                category.getProducts().add(prod);
+                return prod;
+//            }else{
+//                product1.setCategoryId(product.getCategoryId());
+//                product1.setId(product.getId());
+//                return productRepository.save(product1);
+//            }
 
-            product.getBrand().setBrandName(product.getBrand().getBrandName().toUpperCase());
-
-            Product product1 = productRepository.save(product);
-            category.getProducts().add(product1);
-            categoryRepository.save(category);
-          return product1;
         }catch(Exception ex){
             throw new Exception(ex.getMessage());
         }
@@ -99,12 +104,12 @@ public class ProductImplementation implements ProductService {
     }
 
     @Override
-    public List<Product> findByBrandName(String brandName) throws Exception {
+    public List<Product> findByBrand(String brand) throws Exception {
         try{
-            List<Product> products = productRepository.findByBrand_BrandName(brandName);
+            List<Product> products = productRepository.findByBrand(brand);
             return products;
         }catch(Exception ex){
-            throw new Exception("product with Id "+ brandName +" does not exist");
+            throw new Exception("product with Id "+ brand +" does not exist");
         }
     }
 }

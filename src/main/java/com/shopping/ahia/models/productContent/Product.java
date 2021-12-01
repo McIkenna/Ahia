@@ -11,6 +11,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.annotation.Generated;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,7 +24,7 @@ import java.util.List;
 public class Product {
     @Id
     private String id;
-    private Brand brand; //one to One
+    private String brand; //one to One
     private String categoryId;
     private String productName;
     private String productSummary;

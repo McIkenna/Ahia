@@ -55,17 +55,17 @@ public class ProductController {
     }
 
     @GetMapping("cat/{categoryName}")
-    public List<Product> getCategory(@PathVariable String categoryName) throws Exception {
+    public List<Product> getProduct(@PathVariable String categoryName) throws Exception {
         return productService.findProductByCategory(categoryName);
     }
 
-    @GetMapping("brand/{brandName}")
-    public List<Product> getBrandName(@PathVariable String brandName) throws Exception {
-        return productService.findByBrandName(brandName.toUpperCase());
+    @GetMapping("brand/{brand}")
+    public List<Product> getBrandName(@PathVariable String brand) throws Exception {
+        return productService.findByBrand(brand.toUpperCase());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable String id) throws Exception {
+    public ResponseEntity<?> deleteProduct(@PathVariable String id) throws Exception {
         productService.deleteProductById(id);
         return new ResponseEntity<String>("User with ID: " + id + " was deleted", HttpStatus.OK);
     }

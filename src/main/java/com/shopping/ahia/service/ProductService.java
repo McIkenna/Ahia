@@ -16,5 +16,5 @@ public interface ProductService {
     Product findByProductName(String productName) throws Exception;
 
     List<Product> findProductByCategory(String categoryId) throws Exception;
-    List<Product> findByBrandName(String brandName) throws Exception;
+    List<Product> findByBrand(String brand) throws Exception;
 }
