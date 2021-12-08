@@ -23,17 +23,18 @@ import java.util.List;
 public class Cart {
     @Id
     private String id;
+    private String productId;
     private Date createdDate;
     private Status orderStatus;
     private Binary cartImage;
+    private String productName;
     private int quantity;
-    private int numOfItems = 0;
-    private double totalPrice;
-    @DBRef
-    private AppUser appUser;
-    private PaymentMethod paymentMethod;
-    @DBRef
-    private Product product; //one to many of product
+    private double price;
+   // @DBRef
+   // private AppUser appUser;
+//    //private PaymentMethod paymentMethod;
+//   @DBRef
+//    private List<Product> product = new ArrayList<>(); //one to many of product
 
     public Cart(Date createdDate) {
         this.createdDate = new Date();

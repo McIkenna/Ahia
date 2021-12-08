@@ -26,6 +26,7 @@ public class Product {
     private String id;
     private String brand; //one to One
     private String categoryId;
+    private String categoryName;
     private String productName;
     private String productSummary;
     private String productDescription;

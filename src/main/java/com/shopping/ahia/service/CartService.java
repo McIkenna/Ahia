@@ -9,11 +9,12 @@ import java.util.List;
 
 @Component
 public interface CartService {
-    Cart addToCart(Cart cart, String productId)throws Exception;
+    Cart addToCart(Cart cart)throws Exception;
     Cart CartItems();
     List<Cart> itemsInCart();
-    Cart listCartItems(AppUser user);
+    //Cart listCartItems(AppUser user);
     void deleteCartItem(String cartId);
     void clearCart();
-    void deleteUserCartItem(AppUser user);
+    Cart findCartById(String id) throws Exception;
+   // void deleteUserCartItem(AppUser user);
 }

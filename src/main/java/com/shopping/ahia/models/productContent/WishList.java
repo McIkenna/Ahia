@@ -7,7 +7,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Document
 @NoArgsConstructor
@@ -19,6 +21,6 @@ public class WishList {
     @DBRef
     private Date createdDate;
     @DBRef
-    private Product product;
+    private List<Product> product = new ArrayList<>();
 
 }

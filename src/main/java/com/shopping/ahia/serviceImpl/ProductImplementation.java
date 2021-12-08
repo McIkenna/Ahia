@@ -45,6 +45,7 @@ public class ProductImplementation implements ProductService {
             }
                 product.setCategoryId(categoryId);
                 product.setBrand(product.getBrand().toUpperCase());
+                product.setCategoryName(category.getCategoryName());
                 Product prod = productRepository.save(product);
                 category.getProducts().add(prod);
                 return prod;

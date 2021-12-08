@@ -1,7 +1,9 @@
 package com.shopping.ahia.serviceImpl;
 
 import com.shopping.ahia.models.productContent.Category;
+import com.shopping.ahia.models.productContent.Product;
 import com.shopping.ahia.repository.CategoryRepository;
+import com.shopping.ahia.repository.ProductRepository;
 import com.shopping.ahia.service.CategoryService;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -29,6 +31,8 @@ public class CategoryImplementation implements CategoryService {
     CategoryRepository categoryRepository;
     @Autowired
     MongoOperations mongoOperations;
+    @Autowired
+    ProductRepository productRepository;
 
 
 /*
@@ -77,11 +81,16 @@ public class CategoryImplementation implements CategoryService {
 
     @Override
     public void deleteCategoryById(String id) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("categoryId").is(id));
+        List<Product> product1= mongoOperations.find(query, Product.class);
+        productRepository.deleteAll(product1);
         categoryRepository.deleteById(id);
     }
 
     @Override
     public Category findById(String id) {
+
        Category category = categoryRepository.findById(id);
      /* Query query = new Query(Criteria.where("id").is(new ObjectId(id)));
         Category category = mongoTemplate.findOne(query, Category.class);

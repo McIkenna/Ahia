@@ -8,6 +8,8 @@ import com.shopping.ahia.repository.CartRepository;
 import com.shopping.ahia.repository.CategoryRepository;
 import com.shopping.ahia.repository.ProductRepository;
 import com.shopping.ahia.service.CartService;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,26 +23,36 @@ public class CartImplementation implements CartService {
     @Autowired
     CartRepository cartRepository;
     @Autowired
-    AppUserRepository appUserRepository;
-    @Autowired
     ProductRepository productRepository;
 
     @Override
-    public Cart addToCart(Cart cart, String productId) throws Exception {
+    public Cart addToCart(Cart cart) throws Exception {
         try{
+            int qty = 0;
            // AppUser user = appUserRepository.findById(userId);
-            Product product = productRepository.findById(productId);
+//
+//            Product product = productRepository.findById(productId);
             //cart.setAppUser(user);
-            cart.setNumOfItems(cart.getNumOfItems()+1);
+//            cart.setProductId(product.getId());
+//            cart.setQuantity(cart.getQuantity()+1);
+//            cart.setCumPrice(cart.getCumPrice() + product.getPrice());
+//            cart.setCartImage(product.getMainImage());
+//            cart.getProduct().add(product);
+            Cart cart1 = cartRepository.findById(cart.getId());
+            Product product = productRepository.findById(cart.getId());
             cart.setCartImage(product.getMainImage());
-            cart.setProduct(product);
+            if(cart1 == null){
+                cart.setQuantity(1);
+                return cartRepository.save(cart);
+            }
+            cart.setQuantity(cart1.getQuantity()+1);
             return cartRepository.save(cart);
         }catch(Exception ex){
             throw new Exception("Something went wrong");
         }
     }
 
-    @Override
+/*    @Override
     public Cart listCartItems(AppUser user) {
         List<Cart> cartList = cartRepository.findAllByAppUserOrderByCreatedDateDesc(user);
         double totalCost = 0;
@@ -52,7 +64,7 @@ public class CartImplementation implements CartService {
         return cart;
 
     }
-
+*/
     @Override
     public List<Cart> itemsInCart() {
         return cartRepository.findAll();
@@ -62,12 +74,7 @@ public class CartImplementation implements CartService {
     @Override
     public Cart CartItems() {
         List<Cart> cartList = cartRepository.findAll();
-        double totalCost = 0;
-        for(Cart cartItems: cartList){
-            totalCost +=(cartItems.getProduct().getPrice() * cartItems.getQuantity());
-        }
         Cart cart = new Cart();
-        cart.setTotalPrice(totalCost);
         return cart;
     }
 
@@ -82,7 +89,16 @@ public class CartImplementation implements CartService {
     }
 
     @Override
-    public void deleteUserCartItem(AppUser user) {
-        cartRepository.deleteByAppUser(user);
+    public Cart findCartById(String id) throws Exception {
+        Cart cart1 = cartRepository.findById(id);
+        if(cart1 == null){
+           throw new Exception("Item not available in cart");
+        }
+        return cart1;
     }
+
+//    @Override
+//    public void deleteUserCartItem(AppUser user) {
+//        cartRepository.deleteByAppUser(user);
+//    }
 }

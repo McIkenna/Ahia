@@ -25,19 +25,21 @@ public class CartController {
     @Autowired
     ErrorMapping errorMapping;
 
-    @PostMapping("/{productId}")
-    public ResponseEntity<?> saveProduct(@Valid @RequestBody Cart cart, String productId, BindingResult result)throws Exception{
+    @PostMapping("")
+    public ResponseEntity<?> saveCart(@Valid @RequestBody Cart cart, BindingResult result)throws Exception{
         ResponseEntity<?> errorMap = errorMapping.ErrorMappingService(result);
         if(errorMap != null){
             return errorMap;
         }
-
-
-
-        Cart cart1 = cartService.addToCart(cart, productId);
+        Cart cart1 = cartService.addToCart(cart);
         return new ResponseEntity<Cart>(cart1, HttpStatus.CREATED);
     }
 
+    @GetMapping("/{cartId}")
+    public ResponseEntity<?> getByCartId(@PathVariable String cartId) throws Exception {
+        Cart car1 = cartService.findCartById(cartId);
+        return new ResponseEntity<Cart>(car1, HttpStatus.OK);
+    }
 
     @GetMapping("/all")
     public List<Cart> getAllCart(){
