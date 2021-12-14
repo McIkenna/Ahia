@@ -50,6 +50,7 @@ public class CategoryImplementation implements CategoryService {
     @Override
     public Category save(MultipartFile file, Category category) throws Exception {
         try{
+
             Query query = new Query();
             query.addCriteria(Criteria.where("_id").is(category.getId()));
             Category category1 = mongoOperations.findOne(query, Category.class);
@@ -89,9 +90,12 @@ public class CategoryImplementation implements CategoryService {
     }
 
     @Override
-    public Category findById(String id) {
+    public Category findById(String id) throws Exception {
 
        Category category = categoryRepository.findById(id);
+       if(category == null){
+           throw new Exception("Category with id " + id + " does not exist");
+       }
      /* Query query = new Query(Criteria.where("id").is(new ObjectId(id)));
         Category category = mongoTemplate.findOne(query, Category.class);
 */
@@ -124,5 +128,12 @@ public class CategoryImplementation implements CategoryService {
     public Category findByCategoryName(String categoryName) {
         Category preCategory = categoryRepository.findByCategoryName(categoryName);
         return preCategory;
+    }
+
+    public boolean categoryContains(String categoryName) throws Exception {
+        if(categoryName.contains("Alaba")){
+            throw new Exception("Category contains Alaba");
+        }
+        return false;
     }
 }

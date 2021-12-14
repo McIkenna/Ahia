@@ -37,7 +37,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public Category getCategoryById(@PathVariable String id){
+    public Category getCategoryById(@PathVariable String id) throws Exception {
         return categoryService.findById(id);
     }
 

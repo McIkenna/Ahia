@@ -13,7 +13,7 @@ public interface CategoryService {
     //Category update(Category category) throws Exception;
     Category save(MultipartFile file, Category category) throws Exception;
     void deleteCategoryById(String id);
-    Category findById(String id);
+    Category findById(String id) throws Exception;
     List<Category> findAllCategory();
     Category findByCategoryName(String categoryName);
     Map<String, Object> getAllCategoryInPage(int pageNo, int pageSize, String sort);
